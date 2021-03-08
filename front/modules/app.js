@@ -1,31 +1,43 @@
 class App {
-    loaders = []
-    instances = []
+    instances = {}
     self
+    logger
     constructor() { 
-        console.log('[APP] Init')
         this.self = this
+        console.log('[APP] Init')
+    }
+    inject(loader) {
+        console.log(`[APP] ${loader.moduleName} is Injectected`)
+        this.instances[`${loader.moduleName}`] = loader.load(this.self)
+        console.log(this.instances)
     }
     async start() {
         console.log('[APP] Start')
-        this.instances = this.loaders.forEach(loader => {
-            let obj = {}
-            let instance = loader.load(this.self)
-            obj[`${loader.moduleName}`] = instance
-            window[`${loader.moduleName.toUpperCase()}`] = obj[`${loader.moduleName}`]
-            this.instances.push(obj)
-            console.log(this.instances)
+        Object.values(this.instances).forEach(i => {
+            i.init()
         })
     }
-    inject(loader) {
-        console.log(`[APP] ${loader} is Injectected`)
-        this.loaders.push(loader)
+    pathsUpdate(paths) {
+        console.log('[APP] pathsUpdated Invoked')
+        this.instances['Paths'].updateUI(paths)
     }
-    pathUpdate(paths) {
-        console.log(this.instances)
+    finderUpdate(path) {
+        console.log('[APP] finderUpdate Invoked')
+        let id
+        if (path === 'Root') {
+            id = 0
+        } else {
+            id = parseInt(path)
+        }
+        this.instances['Finder'].gotoPath(id)
     }
 }
 
 (() => {
+    window.DEBUG = true
+    window.LOGGER = (msg) => {
+        window.DEBUG && console.log(msg)
+    }
     window.APP = new App()
+
 })()

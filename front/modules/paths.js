@@ -1,7 +1,7 @@
 const pathsLoader = (() => {
     let moduleName = 'Paths'
-    const load = () => {
-        return new Paths()
+    const load = (app) => {
+        return new Paths(app)
     }
     return {
         load,
@@ -21,33 +21,36 @@ class Paths {
         this.wrapper = document.querySelector('paths')
         this.self = this
     }
-    cleanui() {
-        this.wrapper.innerhtml = ''
+    init() {
+        const view = this.self.createView([0])
+        this.cleanUI()
+        this.wrapper.querySelector('ol').insertAdjacentHTML('beforeend', view)
+
     }
-    createpaths () {
-        const ol = document.createelement('ol')
-        ol.classlist.add('arrows')
-        const template = (path) => `<li><a href="#">${path}</a></li>`
+    cleanUI() {
+        this.wrapper.querySelector('ol').innerHTML = ''
     }
-    async updatePath(pathArr) {
+    createView (paths) {
+        const ol = document.createElement('ol')
+        ol.classList.add('arrows')
+        const template = (path) => (path === 0) 
+            ? `<li><a id=${path} href="#">Root</a></li>`
+            : `<li><a id=${path} href="#">${path}</a></li>`
+        return paths.map(template).join('') 
+    }
+    async updateUI(pathArr) {
         this.self.cleanUI()
         console.log(pathArr)
-        // this.self.createButtonUI()
-        // const items = (await this.getInfo(id))
-        // const view = items.map(this.getView).join('')
-        // this.wrapper.insertAdjacentHTML('beforeend', view)
+        const view = this.self.createView(pathArr)
+        this.cleanUI()
+        this.wrapper.querySelector('ol').insertAdjacentHTML('beforeend', view)
 
-        // Array.from(this.wrapper.querySelectorAll('div.folder')).forEach(f => {
-        //     f.addEventListener('click', async(e) => {
-        //         this.self.gotoPath(e.currentTarget.id)
-        //     })
-        // })
-
-        // Array.from(this.wrapper.querySelectorAll('div.file')).forEach(f => {
-        //     f.addEventListener('click', async(e) => {
-        //         console.log(e.currentTarget.id)
-        //     })
-        // })
+        Array.from(this.wrapper.querySelectorAll('ol li a')).forEach(f => {
+            f.addEventListener('click', async(e) => {
+                console.log(this.app)
+                this.app.finderUpdate(e.currentTarget.id)
+            })
+        })
     }
 }
 

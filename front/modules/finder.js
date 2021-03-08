@@ -22,6 +22,8 @@ class Finder {
         this.app = app
         this.wrapper = document.querySelector('finder')
         this.self = this
+    }
+    init() {
         this.self.gotoPath(0)
     }
     getInfo(id) {
@@ -66,12 +68,6 @@ class Finder {
         })
     }
     async gotoPath(id) {
-        if (id === 0) {
-            this.paths = [0]
-        } else {
-            this.paths.push(parseInt(id))
-        }
-        this.app.pathUpdate(this.paths)
         this.self.cleanUI()
         this.self.createButtonUI()
         const items = (await this.getInfo(id))
@@ -80,7 +76,15 @@ class Finder {
 
         Array.from(this.wrapper.querySelectorAll('div.folder')).forEach(f => {
             f.addEventListener('click', async(e) => {
-                this.self.gotoPath(e.currentTarget.id)
+                const id = e.currentTarget.id
+                if (id === 0 || this.paths.length === 0) {
+                    this.paths = [0]
+                } 
+                if (id !== 0) {
+                    this.paths.push(parseInt(id))
+                }
+                this.app.pathsUpdate(this.paths)
+                this.self.gotoPath(id)
             })
         })
 
