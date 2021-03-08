@@ -1,2 +1,2 @@
-console.log('main init')
+console.log('[MAIN] INIT')
 window.APP.start()
