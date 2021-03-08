@@ -10,28 +10,62 @@ class Finder {
     app
     wrapper
     state 
-    store
     constructor(app) {
         this.self = this
         this.app = app
         this.wrapper = document.querySelector('finder')
-        this.state = {
-            currentPath: 0,
-            currentPathName: 'Root'
-        }
-        this.app.assignReducer((state = {'finder': this.state}, action) => {
-            return ({
-                ...state
-            })
+        this.app.addState({
+            'finder': {
+                parentPath: 0,
+                currentPath: 0,
+                items: []
+            }
         })
     }
     async render() {
         this.wrapper.innerHTML = ''
-        const { currentPath, currentPathName } = this.state
-        const items = await this.app.get(currentPath)
+        const { 'finder': { items } } = this.app.getState()
         const views = items.map(itemView).join('')
         this.wrapper.insertAdjacentHTML('beforeend', views)
+        const [folder, file] = [[...this.wrapper.querySelectorAll('div.folder')], [...this.wrapper.querySelectorAll('div.file')]]
+        if (folder.length > 0) {
+            folder.map(f => f.addEventListener('click', (e) => { 
+                const id = e.currentTarget.id
+                const pathName = e.currentTarget.querySelector('h1').textContent
+                this.updatePath(id, pathName) 
+            }))
+        }
+        if (file.length > 0) {
+            file.map(f => f.addEventListener('click', (e) => { 
+                console.log(e.currentTarget.id) 
+            }))
+        }
+    }
+    async updatePath(id, pathName) {
+        const items = await this.app.get(id)
+        const { finder, bread } = this.app.getState()
         
+        bread.pathQue.push(id)
+        bread.pathNameMap.set(id, pathName)
+
+        this.app.setState({
+            'bread': {
+                pathQue: bread.pathQue,
+                pathNameMap: bread.pathNameMap
+            }
+        })
+        let res = this.app.getState().bread
+        this.app.notify()
+    }
+    async componentDidMount() {
+        const { finder } = this.app.getState()
+        const items = await this.app.get(finder.currentPath)
+        console.log(items)
+        this.app.setState({ 'finder': {
+            items: items
+        }})
+        console.log(this.app.getState(items).finder)
+        this.render()
     }
 }
 
@@ -47,7 +81,7 @@ function itemView({ id, type, title, filepath, parent }) {
         throw Error('ITEM TYPE ERROR')
     }
     return (` 
-        <div class="${props.get('className')}">
+        <div id="${id}" class="${props.get('className')}">
             <i class="material-icons">${props.get('icon')}
                 <p class="cooltip">0 folders / 0 files</p>
             </i>

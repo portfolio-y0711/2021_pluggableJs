@@ -3,77 +3,31 @@ const loader = (() => {
     let moduleName = ''
     let adaptorName = 'ADT/STORE'
 
-    const load = (app) => {
-        let reducers = []
-        let store
-
-        function combineReducers() { 
-            const reducerKeys = Object.keys(reducers)
-            const finalReducers = {}
-            for (let i = 0; i < reducerKeys.length; i++) {
-                const key = reducerKeys[i]
-
-                if (typeof reducers[key] === 'function') {
-                    finalReducers[key] = reducers[key]
-                }
+    const load = () => {
+        let listeners = []
+        let state = {}
+        return (() => {
+            const addState = (newState) => {
+                state = { ...state, ...newState }
             }
-            const finalReducersKey = Object.keys(finalReducers)
-
-            return function combination(state, action) {
-                let hasChanged = false
-                const nextState = {}
-                for (let i = 0; i < finalReducerKeys.length; i++) {
-                    const key = finalReducerKeys[i]
-                    const reducer = finalReducers[key]
-                    const previousStateForKey = state[key]
-                    const nextStateForKey = reducer(previousstateForKey, action)
-                    nextState[key] = nextStateForKey
-                    hasChanged = hasChanged || nextStateForKey !== previousStateForKey
-                }
-                hasChanged = hasChanged || finalReducers.length !== Object.keys(state).length
-                return hasChanged ? nextState: state
+            const getState = () => (state)
+            const setState = (newState) => {
+                state = ({ ...state, ...newState })
             }
-        }
-
-        return(() => ({
-            assignReducer: (reducer) => {
-                reducers.push(reducer)
-            },
-            createStore: () => {
-                const reducer = combineReducers()
-                let state
-                const listeners = []
-
-                function getState() {
-                    return state
-                }
-
-                function dispatch(action) {
-                    state = reducer(state, action)
-                    listeners.forEach((callback) => {
-                        callback()
-                    })
-                    return action
-                }
-
-                function subscribe(listener) {
-                    listeners.push(listener)
-                    return () => {
-                        listeners.splice(listeners.indexOf(listener), 1)
-                    }
-                }
-                app.store = ({
-                    getState,
-                    subscribe,
-                    dispatch,
-                    state,
-                    listeners
-                })
-                return app.store
+            const addInstance = (module) => listeners.push(module)
+            const notify = () => {
+                listeners.forEach(l => l.render())
             }
-
-        }))()
+            return {
+                addState,
+                getState,
+                setState,
+                addInstance,
+                notify
+            }
+        })()
     }
+
     return {libName, moduleName, adaptorName, load}
 })();
 (() => {

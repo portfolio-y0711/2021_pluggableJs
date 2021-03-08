@@ -9,13 +9,15 @@ class App {
     constructor() {
        this.self = this 
     }
-    start() {
-        this.store = this.proxy.createStore()
-        Array.from(this.modules.keys()).forEach(key => {
+    async start() {
+        Array.from(this.modules.keys()).forEach((key) => {
            const instance = this.modules.get(key) 
-           instance.store = this.store
-           console.log(instance.store)
-           instance.render()
+           instance.componentDidMount()
+        })
+        this.adaptors.forEach(adaptor => {
+            if (adaptor.hasOwnProperty('addInstance')) {
+                this.modules.forEach(m => adaptor.addInstance(m))
+            }
         })
     }
     injectAdaptorLoader(loader) {
