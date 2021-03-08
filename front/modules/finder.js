@@ -1,25 +1,20 @@
 const finderLoader = () => new Finder()
 
 class Finder {
+    wrapper
+    api
     constructor() {
         // constructor
         console.log('[MOD] (Finder) Init')
-        this.init()
+        this.api = window.API
+        this.wrapper = document.querySelector('finder')
     }
-    async init() {
-        console.log('init')
-        const wrapper = document.querySelector('finder')
-        const Api = window.API
-        // fetchData
-        const folder = (await Api.get('root'))[0]
-        const file = (await Api.get('1'))[0]
-        // console.log(folder)
-        // fetchData
-
-
-        // updateUI
+    getInfo(id) {
+        return this.api.get(id || 'root')
+    }
+    getView(item) {
         const template = (data) => {
-            const { id, type } = data
+            const { id, type, title } = data
             const [filetype, icon] = 
                 (type === 'DIRECTORY') 
                 ? ['folder', 'folder']
@@ -31,16 +26,32 @@ class Finder {
                     <i class="material-icons">${icon}
                         <p class="cooltip">0 folders / 0 files</p>
                     </i>
-                    <h1>Projects</h1>
+                    <h1>${title}</h1>
                 </div> 
             `)
         }
-        wrapper.insertAdjacentHTML('beforeend',template(folder))
-        wrapper.insertAdjacentHTML('beforeend',template(file))
-        // updateUI
+        return template(item)
+    }
+    async init() {
+        // fetchData
+        const items = (await this.getInfo(1))
+        const view = items.map(this.getView).join('')
+        this.wrapper.insertAdjacentHTML('beforeend', view)
 
-        // cleanUI
-        // cleanUI
+        // updateUI
+        // this.cleanUI()
+        Array.from(this.wrapper.querySelectorAll('div.folder')).forEach(f => {
+            f.addEventListener('click', (e) => {
+                console.log(e.currentTarget.id)
+            })
+        })
+
+        Array.from(this.wrapper.querySelectorAll('div.file')).forEach(f => {
+            f.addEventListener('click', (e) => {
+                console.log(e.currentTarget.id)
+            })
+        })
+
     }
 }
 
