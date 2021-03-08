@@ -1,16 +1,26 @@
-const finderLoader = () => new Finder()
+const finderLoader = (() => {
+    let moduleName = 'Finder'
+    const load = () => {
+        return new Finder()
+    }
+    return {
+        load,
+        moduleName
+    }
+})()
 
 class Finder {
     wrapper
     api
     self
+    paths = []
     constructor() {
         // constructor
         console.log('[MOD] (Finder) Init')
         this.api = window.API
         this.wrapper = document.querySelector('finder')
         this.self = this
-        this.self.updateUI()
+        this.self.gotoPath(0)
     }
     getInfo(id) {
         return this.api.get(id || 'root')
@@ -38,30 +48,42 @@ class Finder {
     cleanUI() {
         this.wrapper.innerHTML = ''
     }
-    async updateUI() {
-        // fetchData
-        const items = (await this.getInfo(0))
+    createButtonUI () {
+        const template = `
+            <div id="revert">
+                <div class="file">
+                    <i class="material-icons">arrow_left
+                        <p class="cooltip">to previous</p>
+                    </i>
+                </div>
+            </div>
+        `
+        this.wrapper.innerHTML = template
+        document.getElementById('revert').addEventListener('click', () => {
+            this.self.gotoPath(0)
+        })
+    }
+    async gotoPath(id) {
+        if (id === 0) {
+            this.paths = [0]
+        } else {
+            this.paths.push(parseInt(id))
+        }
+        this.self.cleanUI()
+        this.self.createButtonUI()
+        const items = (await this.getInfo(id))
         const view = items.map(this.getView).join('')
         this.wrapper.insertAdjacentHTML('beforeend', view)
 
-        // updateUI
-        // this.cleanUI()
         Array.from(this.wrapper.querySelectorAll('div.folder')).forEach(f => {
             f.addEventListener('click', async(e) => {
-                const items = await this.self.getInfo(e.currentTarget.id)
-                const view = items.map(this.getView).join('')
-                this.self.cleanUI()
-                this.wrapper.insertAdjacentHTML('beforeend', view)
+                this.self.gotoPath(e.currentTarget.id)
             })
         })
 
         Array.from(this.wrapper.querySelectorAll('div.file')).forEach(f => {
             f.addEventListener('click', async(e) => {
                 console.log(e.currentTarget.id)
-                const items = await this.self.getInfo(e.currentTarget.id)
-                const view = items.map(this.getView).join('')
-                this.self.cleanUI()
-                this.wrapper.insertAdjacentHTML('beforeend', view)
             })
         })
     }
