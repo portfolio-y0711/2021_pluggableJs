@@ -6,7 +6,6 @@ class App {
     async start() {
         console.log('[APP] Start')
         const instance = this.loader()
-        instance.init()
     }
     inject(loader) {
         console.log(`[APP] ${loader} is Injectected`)

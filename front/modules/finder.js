@@ -3,11 +3,14 @@ const finderLoader = () => new Finder()
 class Finder {
     wrapper
     api
+    self
     constructor() {
         // constructor
         console.log('[MOD] (Finder) Init')
         this.api = window.API
         this.wrapper = document.querySelector('finder')
+        this.self = this
+        this.self.updateUI()
     }
     getInfo(id) {
         return this.api.get(id || 'root')
@@ -32,26 +35,35 @@ class Finder {
         }
         return template(item)
     }
-    async init() {
+    cleanUI() {
+        this.wrapper.innerHTML = ''
+    }
+    async updateUI() {
         // fetchData
-        const items = (await this.getInfo(1))
+        const items = (await this.getInfo(0))
         const view = items.map(this.getView).join('')
         this.wrapper.insertAdjacentHTML('beforeend', view)
 
         // updateUI
         // this.cleanUI()
         Array.from(this.wrapper.querySelectorAll('div.folder')).forEach(f => {
-            f.addEventListener('click', (e) => {
-                console.log(e.currentTarget.id)
+            f.addEventListener('click', async(e) => {
+                const items = await this.self.getInfo(e.currentTarget.id)
+                const view = items.map(this.getView).join('')
+                this.self.cleanUI()
+                this.wrapper.insertAdjacentHTML('beforeend', view)
             })
         })
 
         Array.from(this.wrapper.querySelectorAll('div.file')).forEach(f => {
-            f.addEventListener('click', (e) => {
+            f.addEventListener('click', async(e) => {
                 console.log(e.currentTarget.id)
+                const items = await this.self.getInfo(e.currentTarget.id)
+                const view = items.map(this.getView).join('')
+                this.self.cleanUI()
+                this.wrapper.insertAdjacentHTML('beforeend', view)
             })
         })
-
     }
 }
 
