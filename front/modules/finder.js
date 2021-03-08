@@ -1,7 +1,7 @@
 const finderLoader = (() => {
     let moduleName = 'Finder'
-    const load = () => {
-        return new Finder()
+    const load = (app) => {
+        return new Finder(app)
     }
     return {
         load,
@@ -12,12 +12,14 @@ const finderLoader = (() => {
 class Finder {
     wrapper
     api
+    app
     self
     paths = []
-    constructor() {
+    constructor(app) {
         // constructor
         console.log('[MOD] (Finder) Init')
         this.api = window.API
+        this.app = app
         this.wrapper = document.querySelector('finder')
         this.self = this
         this.self.gotoPath(0)
@@ -69,6 +71,7 @@ class Finder {
         } else {
             this.paths.push(parseInt(id))
         }
+        this.app.pathUpdate(this.paths)
         this.self.cleanUI()
         this.self.createButtonUI()
         const items = (await this.getInfo(id))

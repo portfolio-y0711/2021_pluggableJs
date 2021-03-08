@@ -12,42 +12,21 @@ const pathsLoader = (() => {
 class Paths {
     wrapper
     self
-    constructor() {
+    app
+    constructor(app) {
         // constructor
         console.log('[MOD] (Paths) Init')
         this.api = window.API
+        this.app = app
         this.wrapper = document.querySelector('paths')
         this.self = this
     }
-    // getInfo(id) {
-    //     return this.api.get(id || 'root')
-    // }
-    // getView(item) {
-    //     const template = (data) => {
-    //         const { id, type, title } = data
-    //         const [filetype, icon] = 
-    //             (type === 'DIRECTORY') 
-    //             ? ['folder', 'folder']
-    //             : (type === 'FILE')
-    //                 ? ['file', 'file_present']
-    //                 : ['', '']
-    //         return (`
-    //             <div id="${id}" class="${filetype}">
-    //                 <i class="material-icons">${icon}
-    //                     <p class="cooltip">0 folders / 0 files</p>
-    //                 </i>
-    //                 <h1>${title}</h1>
-    //             </div> 
-    //         `)
-    //     }
-    //     return template(item)
-    // }
-    cleanUI() {
-        this.wrapper.innerHTML = ''
+    cleanui() {
+        this.wrapper.innerhtml = ''
     }
-    createPaths () {
-        const ol = document.createElement('ol')
-        ol.classList.add('arrows')
+    createpaths () {
+        const ol = document.createelement('ol')
+        ol.classlist.add('arrows')
         const template = (path) => `<li><a href="#">${path}</a></li>`
     }
     async updatePath(pathArr) {

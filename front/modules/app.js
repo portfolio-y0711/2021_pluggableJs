@@ -1,21 +1,28 @@
 class App {
     loaders = []
     instances = []
+    self
     constructor() { 
         console.log('[APP] Init')
+        this.self = this
     }
     async start() {
         console.log('[APP] Start')
-        this.instances = this.loaders.map(loader => {
+        this.instances = this.loaders.forEach(loader => {
             let obj = {}
-            obj[`${loader.moduleName}`] = loader.load()
+            let instance = loader.load(this.self)
+            obj[`${loader.moduleName}`] = instance
             window[`${loader.moduleName.toUpperCase()}`] = obj[`${loader.moduleName}`]
-            return obj
+            this.instances.push(obj)
+            console.log(this.instances)
         })
     }
     inject(loader) {
         console.log(`[APP] ${loader} is Injectected`)
         this.loaders.push(loader)
+    }
+    pathUpdate(paths) {
+        console.log(this.instances)
     }
 }
 
