@@ -6,7 +6,7 @@ const loader = (() => {
         let baseUrl = 'http://localhost:5000'
         return (() => {
             const get = async(path) => {
-                if (path === 'root' || path === 0) {
+                if (path === 0 || path === 'root') {
                     return await new Promise(res => setTimeout(res, 500, data.queryRoot))
                 } else {
                     return await new Promise(res => setTimeout(res, 500, data[`query${path}`]))

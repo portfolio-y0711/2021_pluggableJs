@@ -19,6 +19,9 @@ class App {
             if (adaptor.hasOwnProperty('injectModuleInstance')) {
                 this.modules.forEach(m => adaptor.injectModuleInstance(m))
             }
+            if (adaptor.hasOwnProperty('injectAdaptorInstances')) {
+                adaptor.injectAdaptorInstances(this.adaptors)
+            }
         })
     }
     injectAdaptorLoader(loader) {

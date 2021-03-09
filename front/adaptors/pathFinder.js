@@ -1,26 +1,54 @@
 const loader = (() => {
     let adaptorName = 'ADT/PATHFINDER'
 
-    const load = (appInstance) => {
+    const load = () => {
         //closure: lexical scope
         // let pathFinder
-        let app = appInstance
         let store
         let api
 
         return (() => {
             //props (& functions)
-            const injectDependencyForPathFinder = ({storeInstance, apiInstance}) => {
-                store = storeInstance
-                api = apiInstance
+
+            const injectAdaptorInstances = (adaptors) => {
+                store = adaptors.get('ADT/STORE')
+                api = adaptors.get('ADT/API')
             }
 
-            const gotoPath = async() => {
+            const gotoPath = async(id) => {
                 const { finder, bread } = store.getState()
+                if (bread.pathQue.length === 1 || id === finder.currentPath) {
+                    return
+                }
+
+                const idx = bread.pathQue.findIndex(e => e === id)
+                const items = await api.get(id) 
+
+                const [ rem, dump ] = [ bread.pathQue.slice(0, idx + 1), bread.pathQue.slice(idx + 1) ]
+                
+                dump.forEach(d => {
+                    bread.pathNameMap.delete(d)
+                })
+                bread.pathQue = rem
+                store.setState({
+                    'finder': {
+                        currentPath: id,
+                        parentPath: rem[rem.length - 2],
+                        items: items
+                    },
+                    'bread': {
+                        pathQue: bread.pathQue,
+                        pathNameMap: bread.pathNameMap
+                    }
+                })
+                store.notify()
             }
 
-            const gotoPrevPath = async() => {
+            const outOfDir = async() => {
                 const { finder, bread } = store.getState()
+                if (finder.currentPath === 0) {
+                    return 
+                }
                 const items = await api.get(finder.parentPath) 
 
                 const keyToDelete = bread.pathQue.pop()
@@ -40,7 +68,7 @@ const loader = (() => {
                 store.notify()
             }
 
-            const goIntoDir = async({ id, pathName }) => {
+            const intoDir = async({ id, pathName }) => {
                 const { finder, bread } = store.getState()
                 const items = await api.get(id)
 
@@ -62,9 +90,9 @@ const loader = (() => {
             }
             return {
                 //exporting props (& functions)
-                injectDependencyForPathFinder,
-                gotoPrevPath,
-                goIntoDir,
+                injectAdaptorInstances,
+                outOfDir,
+                intoDir,
                 gotoPath,
             }
         })()

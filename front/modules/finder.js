@@ -1,24 +1,17 @@
 const loader = (() => {
-    let libName = ''
     let moduleName = 'FINDER'
     const load = (app) => new Finder(app)
-    return {libName, moduleName, load}
+    return { moduleName, load }
 })()
 
 class Finder {
     self
     app
     wrapper
-    state 
     constructor(app) {
         this.self = this
         this.app = app
         this.wrapper = document.querySelector('finder')
-        this.app.injectDependencyForPathFinder({
-               storeInstance: this.app.getStore(),
-               apiInstance: this.app.getApi()
-        })
-
     }
     async render() {
         this.wrapper.innerHTML = ''
@@ -29,12 +22,12 @@ class Finder {
         const [folder, file] = [[...this.wrapper.querySelectorAll('div.folder')], [...this.wrapper.querySelectorAll('div.file')]]
 
         document.getElementById('revert').addEventListener('click', (e) => {
-            this.app.gotoPrevPath()
+            this.app.outOfDir()
         })
         if (folder.length > 0) {
             folder.map(f => f.addEventListener('click', (e) => { 
                 const [id, pathName] = [parseInt(e.currentTarget.id), e.currentTarget.querySelector('h1').textContent]
-                this.app.goIntoDir({id, pathName}) 
+                this.app.intoDir({id, pathName}) 
             }))
         }
         if (file.length > 0) {
