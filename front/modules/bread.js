@@ -13,12 +13,6 @@ class Bread {
        this.self = this
        this.app = app
        this.wrapper = document.querySelector('bread')
-       this.app.addState({
-           'bread': {
-               pathQue: [0],
-               pathNameMap: new Map([[0, 'Root']])
-           }
-       })
     }
     render() {
         this.wrapper.innerHTML = ''
@@ -30,7 +24,15 @@ class Bread {
         ol.insertAdjacentHTML('beforeend', breadView)
         this.wrapper.appendChild(ol)
     }
-    componentDidMount(){}
+    componentDidMount(){
+       this.app.setState({
+           'bread': {
+               pathQue: [0],
+               pathNameMap: new Map([[0, 'Root']])
+           }
+       })
+       this.render()
+    }
 }
 
 

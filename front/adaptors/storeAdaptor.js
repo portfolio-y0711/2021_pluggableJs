@@ -7,19 +7,15 @@ const loader = (() => {
         let listeners = []
         let state = {}
         return (() => {
-            const addState = (newState) => {
-                state = { ...state, ...newState }
-            }
             const getState = () => (state)
             const setState = (newState) => {
-                state = ({ ...state, ...newState })
+                state = { ...state, ...newState }
             }
             const addInstance = (module) => listeners.push(module)
             const notify = () => {
                 listeners.forEach(l => l.render())
             }
             return {
-                addState,
                 getState,
                 setState,
                 addInstance,

@@ -14,13 +14,6 @@ class Finder {
         this.self = this
         this.app = app
         this.wrapper = document.querySelector('finder')
-        this.app.addState({
-            'finder': {
-                parentPath: 0,
-                currentPath: 0,
-                items: []
-            }
-        })
     }
     async render() {
         this.wrapper.innerHTML = ''
@@ -58,13 +51,14 @@ class Finder {
         this.app.notify()
     }
     async componentDidMount() {
-        const { finder } = this.app.getState()
-        const items = await this.app.get(finder.currentPath)
-        console.log(items)
-        this.app.setState({ 'finder': {
-            items: items
-        }})
-        console.log(this.app.getState(items).finder)
+        const items = await this.app.get(0)
+        this.app.setState({ 
+            'finder': {
+                parentPath: 0,
+                currentPath: 0,
+                items: items
+            }
+        })
         this.render()
     }
 }
