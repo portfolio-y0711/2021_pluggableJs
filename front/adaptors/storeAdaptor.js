@@ -7,25 +7,18 @@ const loader = (() => {
         let listeners = []
         let state = {}
         return (() => {
-            const getState = () => (state)
-            const setState = (newState) => {
-                state = { ...state, ...newState }
-            }
             const addInstance = (module) => listeners.push(module)
-            const notify = () => {
-                listeners.forEach(l => l.render())
-            }
-            return {
-                getState,
-                setState,
-                addInstance,
-                notify
-            }
+            const getState = () => (state)
+            const setState = (newState) => { state = { ...state, ...newState } }
+            const notify = () => { listeners.forEach(l => l.render()) }
+            const getStore = () => ({ getState, setState, addInstance, notify })
+            return { getState, setState, addInstance, notify, getStore }
         })()
     }
 
     return {libName, moduleName, adaptorName, load}
 })();
+
 (() => {
     const app = window.APP
     if (app.appName === '2021_modular') {

@@ -14,6 +14,9 @@ class App {
            const instance = this.modules.get(key) 
            instance.componentDidMount()
         })
+        console.log('▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾\n▾▾▾▾▾ HERE !!!!!!\n\n')
+        console.log(this.adaptors)
+        console.log('\n▴▴▴▴▴ HERE !!!!!!\n▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴')
         this.adaptors.forEach(adaptor => {
             if (adaptor.hasOwnProperty('addInstance')) {
                 this.modules.forEach(m => adaptor.addInstance(m))

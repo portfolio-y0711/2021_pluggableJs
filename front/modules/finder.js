@@ -14,18 +14,27 @@ class Finder {
         this.self = this
         this.app = app
         this.wrapper = document.querySelector('finder')
+        this.app.injectDependencyForPathFinder({
+               storeInstance: this.app.getStore(),
+               apiInstance: this.app.getApi()
+        })
+
     }
     async render() {
         this.wrapper.innerHTML = ''
         const { 'finder': { items } } = this.app.getState()
-        const views = items.map(itemView).join('')
-        this.wrapper.insertAdjacentHTML('beforeend', views)
+        const buttonView = renderButtonView()
+        const itemView = items.map(renderItemView).join('')
+        this.wrapper.insertAdjacentHTML('beforeend', [buttonView, itemView].join(''))
         const [folder, file] = [[...this.wrapper.querySelectorAll('div.folder')], [...this.wrapper.querySelectorAll('div.file')]]
+
+        document.getElementById('revert').addEventListener('click', (e) => {
+            this.app.gotoPrevPath()
+        })
         if (folder.length > 0) {
             folder.map(f => f.addEventListener('click', (e) => { 
-                const id = e.currentTarget.id
-                const pathName = e.currentTarget.querySelector('h1').textContent
-                this.updatePath(id, pathName) 
+                const [id, pathName] = [parseInt(e.currentTarget.id), e.currentTarget.querySelector('h1').textContent]
+                this.app.goIntoDir({id, pathName}) 
             }))
         }
         if (file.length > 0) {
@@ -34,22 +43,7 @@ class Finder {
             }))
         }
     }
-    async updatePath(id, pathName) {
-        const items = await this.app.get(id)
-        const { finder, bread } = this.app.getState()
-        
-        bread.pathQue.push(id)
-        bread.pathNameMap.set(id, pathName)
 
-        this.app.setState({
-            'bread': {
-                pathQue: bread.pathQue,
-                pathNameMap: bread.pathNameMap
-            }
-        })
-        let res = this.app.getState().bread
-        this.app.notify()
-    }
     async componentDidMount() {
         const items = await this.app.get(0)
         this.app.setState({ 
@@ -63,7 +57,20 @@ class Finder {
     }
 }
 
-function itemView({ id, type, title, filepath, parent }) {
+function renderButtonView() {
+    const template = `
+        <div id="revert">
+            <div class="file">
+                <i class="material-icons">arrow_left
+                    <p class="cooltip">to previous</p>
+                </i>
+            </div>
+        </div>
+    `
+    return template
+}
+
+function renderItemView({ id, type, title, filepath, parent }) {
     const props = new Map()
     if (type === 'DIRECTORY') {
         props.set('className', 'folder')
