@@ -1,6 +1,4 @@
 const loader = (() => {
-    let libName = ''
-    let moduleName = ''
     let adaptorName = 'ADT/API'
     let proxy
 
@@ -21,7 +19,7 @@ const loader = (() => {
             }
         })()
     }
-    return {libName, moduleName, adaptorName, load}
+    return { adaptorName, load }
 })()
 
 ;(() => {

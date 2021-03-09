@@ -2,7 +2,7 @@ class App {
     appName = '2021_modular'
     modules = new Map()
     libraries = new Map()
-    adaptors = []
+    adaptors = new Map()
     proxy
     store 
     self
@@ -11,31 +11,34 @@ class App {
     }
     async start() {
         Array.from(this.modules.keys()).forEach((key) => {
-           const instance = this.modules.get(key) 
-           instance.componentDidMount()
+           const moduleInstance = this.modules.get(key) 
+           moduleInstance.componentDidMount()
         })
-        console.log('▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾▾\n▾▾▾▾▾ HERE !!!!!!\n\n')
-        console.log(this.adaptors)
-        console.log('\n▴▴▴▴▴ HERE !!!!!!\n▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴▴')
-        this.adaptors.forEach(adaptor => {
-            if (adaptor.hasOwnProperty('addInstance')) {
-                this.modules.forEach(m => adaptor.addInstance(m))
+        Array.from(this.adaptors.keys()).forEach((key) => {
+            const adaptor = this.adaptors.get(key)
+            if (adaptor.hasOwnProperty('injectModuleInstance')) {
+                this.modules.forEach(m => adaptor.injectModuleInstance(m))
             }
         })
     }
     injectAdaptorLoader(loader) {
         const { adaptorName } = loader
         console.log(`[APP] |${adaptorName}| Adaptor Loader Injected`)
-        this.adaptors.push(loader.load(this))
+        const adaptorInstance = loader.load(this)
+        this.adaptors.set(`${adaptorName}`, adaptorInstance)
     }
     injectModuleLoader(loader) {
-        this.proxy = this.adaptors.reduce((acc, adaptor) => {
-            return Object.assign(acc, { ...adaptor })
-        }, {})
+        const adaptors = Array.from(this.adaptors.keys()).map(key => this.adaptors.get(key))
+
+        if (adaptors.length > 0) {
+            this.proxy = adaptors.reduce((acc, adaptor) => {
+                return Object.assign(acc, { ...adaptor })
+            }, {})
+        }
 
         const { moduleName } = loader
         console.log(`[APP] |${moduleName}| Module Loader Injected`)
-        const moduleInstance = loader.load(this.proxy)
+        const moduleInstance = loader.load(this.proxy || this)
         this.modules.set(`${moduleName}`, moduleInstance)
     }
     injectLibraryLoader(loader) {
