@@ -6,16 +6,33 @@ const loader = (() => {
         // let pathFinder
         let store
         let api
+        let mods
 
         return (() => {
             //props (& functions)
 
-            const injectAdaptorInstances = (adaptors) => {
-                store = adaptors.get('ADT/STORE')
+            const injectAdaptorInstances = async(adaptors) => {
                 api = adaptors.get('ADT/API')
+                store = adaptors.get('ADT/STORE')
+                
+                store.setState({
+                    'finder': {
+                        parentPath: 0,
+                        currentPath: 0,
+                        items: [] 
+                    },
+                    'bread': {
+                        pathQue: [],
+                        pathNameMap: new Map()
+                    }
+                })
             }
 
-            const gotoPath = async(id) => {
+            const injectModuleInstances = (modules) => {
+                mods = Array.from(modules).map(([moduleName, module]) => ({ moduleName, module }))
+            }
+
+            const goto = async(id) => {
                 const { finder, bread } = store.getState()
                 if (bread.pathQue.length === 1 || id === finder.currentPath) {
                     return
@@ -93,48 +110,13 @@ const loader = (() => {
                 injectAdaptorInstances,
                 outOfDir,
                 intoDir,
-                gotoPath,
+                goto,
             }
         })()
     }
 
     return {adaptorName, load}
 })();
-
-// class PathFinder {
-//     store
-//     constructor(store) {
-//         this.store = store
-//         console.log(store)
-//     }
-//     gotoPath() {
-
-//     }
-// }
-
-/**
- * path scenario
- * 
- * parentPath: 0
- * currentPath: 0
- * 
- * pathQ: [0, 1, 3]
- * pathNameMap:[0 -> 'root'] [1 -> '까만 고양이'] [3 -> '2012년']
- * 
- * bread: renderInfo / pathQ + pathNameMap
- * 
- * gotoPrevPath() -> [0, > 1 <, 3]
- * 
- * gotoPath(1) -> indexOf pathQ [0, > 1 < , 3] => [0, 1] slice after 1
- * delete pathNameMap sliced [3] -> delete [3 -> '2021년']
- * 
- * parentPath: [0 <-,  > 1 <]
- * currentPath: > 1 <
- * 
- * pathQ.length == 0 => do nothing
- * pathQ > 0
- * 
- */
 
 
 (() => {

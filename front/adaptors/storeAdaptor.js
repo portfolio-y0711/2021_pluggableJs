@@ -6,11 +6,14 @@ const loader = (() => {
         let state = {}
         return (() => {
             const injectModuleInstance = (module) => listeners.push(module)
+            const injectModuleInstances = (modules) => {
+              const mods = Array.from(modules).map(([moduleName, module]) => ({ moduleName, module }))
+            }
             const getState = () => (state)
             const setState = (newState) => { state = { ...state, ...newState } }
             const notify = () => { listeners.forEach(l => l.render()) }
             const getStore = () => ({ getState, setState, notify })
-            return { getState, setState, injectModuleInstance, notify, getStore }
+            return { getState, setState, injectModuleInstances, injectModuleInstance, notify, getStore }
         })()
     }
 

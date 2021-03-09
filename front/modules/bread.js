@@ -28,19 +28,10 @@ class Bread {
         const breadcrumbs = Array.from(this.wrapper.querySelectorAll('li'))
         breadcrumbs.forEach(li => {
             li.addEventListener('click', async(e) => {
-                this.app.gotoPath(parseInt(e.currentTarget.id))
+                this.app.goto(parseInt(e.currentTarget.id))
             })
         })
         
-    }
-    componentDidMount(){
-       this.app.setState({
-           'bread': {
-               pathQue: [0],
-               pathNameMap: new Map([[0, 'Root']])
-           }
-       })
-       this.render()
     }
 }
 

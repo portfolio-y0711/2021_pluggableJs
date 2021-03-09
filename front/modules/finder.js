@@ -38,15 +38,7 @@ class Finder {
     }
 
     async componentDidMount() {
-        const items = await this.app.get(0)
-        this.app.setState({ 
-            'finder': {
-                parentPath: 0,
-                currentPath: 0,
-                items: items
-            }
-        })
-        this.render()
+        await this.app.intoDir({ id: 0, pathName: 'Root'})
     }
 }
 

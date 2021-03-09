@@ -10,10 +10,6 @@ class App {
        this.self = this 
     }
     async start() {
-        Array.from(this.modules.keys()).forEach((key) => {
-           const moduleInstance = this.modules.get(key) 
-           moduleInstance.componentDidMount()
-        })
         Array.from(this.adaptors.keys()).forEach((key) => {
             const adaptor = this.adaptors.get(key)
             if (adaptor.hasOwnProperty('injectModuleInstance')) {
@@ -21,6 +17,16 @@ class App {
             }
             if (adaptor.hasOwnProperty('injectAdaptorInstances')) {
                 adaptor.injectAdaptorInstances(this.adaptors)
+            }
+        })
+        Array.from(this.modules.keys()).forEach((key) => {
+           const module = this.modules.get(key) 
+           const modulePrototypes = Object.getPrototypeOf(module)
+            if (modulePrototypes.hasOwnProperty('componentDidMount')) {
+                module.componentDidMount()
+            }
+            if (modulePrototypes.hasOwnProperty('render')) {
+                module.render()
             }
         })
     }
