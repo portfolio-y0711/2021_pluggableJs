@@ -1,55 +1,107 @@
-## 의식적인 훈련(Code Kata) 1 : &nbsp; 모듈러하게 개발하기 
+## ES6 Module Code Kata &nbsp; 
 
-_부제: 제약 조건 하에서 모듈라하게 ES6 개발하기 1 (스크립트 모듈 vs ~~ES6 Import~~)_
-
-<br/>
-
-> 최근에 린터, 번들러 없는 환경에서 프로그래밍을 하는 과제를 수행하게    
-> 되었는데 그 과정에서 상당히 신선한 충격을 받았습니다. 
-> 
-> 자바스크립트의 어지러운 생태계에서 수없이 많은 도구와 툴을 사용하다가,  
-> naked & afraid의 도전자처럼 한 두가지의 도구만 가지고 생존 게임을  
-> 수행해야 하는 상황이 오니 긴장감이 높아지고 자연스럽게 프로그래밍에  
-> 오롯이 집중할 수 있는 환경이 조성되었습니다.
-> 
-> 타입스크립트의 null safety와 autocompletion, autocorrect의   
-> 타성에 젖어 소극적이고 수동적인 개발을 하고 있지는 않았나 하는 반성과 함께  
-> 아래의 제약 조건 하에서 모듈러한 개발을 연습해보고자 합니다. 
+_부제: ES6 모듈 Import 만으로 모듈라하게 개발하기_
 
 <br/>
 
-### 제약 조건
+> 
+> 
 
-🔥 **_ _** :   
+목차 
 
-* __린터(linter) 기능 없이 개발하기__: ... 
+* 동기 (Motivation)
 
-    ```ts
-    // 전역 경로: ~/Library/Application Support/Code/User/settings.json
-    // 워크스페이스 경로: ./vscode/settings.json
+    * 목적 
 
-        "javascript.validate.enable": false
+* 연습 방법 (Practice Method)
 
-    ```
+    * 연습 과제 
 
-* __트랜스파일러(babel) 없이 개발하기__: ...
+        * 1단계: 시간 제약 없이 기능 개발하기 
 
-* __번들러(babel) 없이 스크립트 모듈 기능으로 개발하기__: ...
+            [`• 브랜치로 바로가기 >>> step01_01`](https://github.com/portfolio-y0711/2018_tdd/tree/chapter_01)
 
-    ```html
+            <!-- [`• 브랜치로 바로가기 >>> step01_02`](https://github.com/portfolio-y0711/2018_tdd/tree/chapter_01) -->
+        
+        * 2단계: 시간 제약 없이 1시간 단위로 커밋 로그 남기며 개발하기  
 
-    <script type="module" src="./modules/...">
+            <!-- [`• 브랜치로 바로가기 >>> step02_01`](https://github.com/portfolio-y0711/2018_tdd/tree/chapter_01) -->
 
-    ```
+            <!-- [`• 브랜치로 바로가기 >>> step02_02`](https://github.com/portfolio-y0711/2018_tdd/tree/chapter_01) -->
 
-* __테스트(test) 없이 개발하기__: ...
+        * 3단계: 시간 제약 하에서 개발하기 
 
+            <!-- [`• 브랜치로 바로가기 >>> step03_01`](https://github.com/portfolio-y0711/2018_tdd/tree/chapter_01) -->
 
-* __제한 시간(3시간 단위)을 두고 개발하기__: ...
+            <!-- [`• 브랜치로 바로가기 >>> step03_02`](https://github.com/portfolio-y0711/2018_tdd/tree/chapter_01) -->
 
+    * 최종 목표 
 
+* 회고 (Retrospective)
 
+<br/>
 
+### 1. 동기 (Motivation)
 
+<br/>
 
+🥅 &nbsp; **_목적_** :   
 
+* 라이브러리 없는 개발을 통해 native 개발 환경을 이해하기 
+
+* 주어진 기능을 최대한 빨리 구현할 수 있는 미니멀한 개발 환경 찾기 
+
+* 현재의 요구사항의 구현에 적합한 모듈화 수준 찾기 (모듈화 vs 하드코딩)
+
+<br/>
+
+### 2. 연습 방법 (Practice Method)
+
+<br/>
+
+🥊 &nbsp; **_연습 과제_** :   
+
+* 1단계: 시간 제약 없이 기능 개발하기 
+
+* 2단계: 시간 제약 없이 1시간 단위로 커밋 로그 남기며 개발하기  
+
+* 3단계: 시간 제약 하에서 개발하기 
+
+<br/>
+
+🚩 &nbsp; **_최종 목표_** :   
+
+* 제한 시간 내에 아래의 제약 조건 하에 주어진 요구 사항을 구현한다. 
+
+    * 제약 조건 
+
+        <details>
+        <summary></summary>
+
+        * 트랜스 파일러(babel) 없이 순수 ES6 문법으로 작성하기 
+
+        * 번들러(webpack) 없이 스크립트 모듈 기능으로 개발하기
+
+        * 린터(linter) 기능 없이 개발하기 
+
+        <br/>
+
+        </details>
+    
+
+    * 요구 사항 
+
+        <details>
+        <summary></summary>
+
+        * Breadcrumb 기능  
+
+        * Folder, File 목록 렌더링 및 탐색/뒤로가기 기능 
+
+        <br/>
+
+        </details>
+
+<br/>
+
+### 3. 회고 (Retrospective)
