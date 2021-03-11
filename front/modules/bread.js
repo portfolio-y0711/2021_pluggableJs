@@ -35,10 +35,7 @@ class Bread {
     }
 }
 
+export {
+    loader
+}
 
-(() => {
-    const app = window.APP
-    if (app.appName === '2021_modular') {
-        app.injectModuleLoader(loader)
-    }
-})()

@@ -76,9 +76,6 @@ function renderItemView({ id, type, title, filepath, parent }) {
     `)
 }
 
-(() => {
-    const app = window.APP
-    if (app.appName === '2021_modular')  {
-        app.injectModuleLoader(loader)
-    }
-})()
+export {
+    loader
+}

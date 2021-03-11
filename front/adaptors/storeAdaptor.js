@@ -20,9 +20,6 @@ const loader = (() => {
     return { adaptorName, load }
 })();
 
-(() => {
-    const app = window.APP
-    if (app.appName === '2021_modular') {
-        app.injectAdaptorLoader(loader)
-    }
-})()
+export {
+    loader
+}
