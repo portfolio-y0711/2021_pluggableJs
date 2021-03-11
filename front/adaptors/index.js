@@ -1,4 +1,4 @@
-import { loader as api } from './fakeapi.js'
+import { loader as api } from '../../back/fakeapi.js'
 import { loader as pathfinder } from './pathFinder.js'
 import { loader as store } from './storeAdaptor.js'
 
