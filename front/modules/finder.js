@@ -33,16 +33,6 @@ class Finder {
             this.wrapper.insertAdjacentHTML('beforeend', [buttonView, itemView].join(''))
             const [folder, file] = [[...this.wrapper.querySelectorAll('div.folder')], [...this.wrapper.querySelectorAll('div.file')]]
 
-            document.getElementById('revert').addEventListener('click', (e) => {
-                this.app.outOfDir()
-            })
-
-            if (folder.length > 0) {
-                folder.map(f => f.addEventListener('click', (e) => {
-                    const [id, pathName] = [parseInt(e.currentTarget.id), e.currentTarget.querySelector('h1').textContent]
-                    this.app.intoDir({id, pathName})
-                }))
-            }
             if (file.length > 0) {
                 file.map(f => f.addEventListener('click', (e) => {
                     console.log(e.currentTarget.id)
@@ -52,13 +42,14 @@ class Finder {
     }
 
     async componentDidMount() {
-        await this.app.intoDir({ id: 0, pathName: 'Root'})
+        await this.app.intoDir({id: 0, pathName: 'Root' })
     }
 }
 
 function renderButtonView() {
+    const handler = `window.APP.adaptors.get('ADT/PATHFINDER')`
     const template = `
-        <div id="revert">
+        <div id="revert" onclick="${handler}.outOfDir()">
             <div class="revert">
                 <i class="material-icons">arrow_left
                     <p class="cooltip">to previous</p>
@@ -70,6 +61,7 @@ function renderButtonView() {
 }
 
 function renderItemView({ id, type, title, filepath, parent }) {
+    const handler = `window.APP.adaptors.get('ADT/PATHFINDER')`
     const props = new Map()
     if (type === 'DIRECTORY') {
         props.set('className', 'folder')
@@ -81,7 +73,7 @@ function renderItemView({ id, type, title, filepath, parent }) {
         throw Error('ITEM TYPE ERROR')
     }
     return (` 
-        <div id="${id}" class="${props.get('className')}">
+        <div id="${id}" onclick="${handler}.intoDir({ id: ${id}, pathName: '${title}' })" class="${props.get('className')}">
             <i class="material-icons">${props.get('icon')}
                 <p class="cooltip">0 folders / 0 files</p>
             </i>

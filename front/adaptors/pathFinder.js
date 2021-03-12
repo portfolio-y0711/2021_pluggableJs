@@ -67,7 +67,7 @@ const loader = (() => {
             const intoDir = async({ id, pathName }) => {
                 const { FINDER: { currentDir, parentDir }, BREAD: { pathQue, pathNameMap } } = store.getState()
                 const items = await api.get(id)
-
+                
                 store.setState({
                     'FINDER': {
                         currentDir: id,

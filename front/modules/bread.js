@@ -26,18 +26,12 @@ class Bread {
         
         const breadView = renderBreadcrumbs(pathQue, pathNameMap)
         this.wrapper.insertAdjacentHTML('beforeend', breadView)
-        
-        const breadcrumbs = Array.from(this.wrapper.querySelectorAll('li'))
-        breadcrumbs.forEach(li => {
-            li.addEventListener('click', async(e) => {
-                this.app.goto(parseInt(e.currentTarget.id))
-            })
-        })
     }
 }
 
 function renderBreadcrumbs(pathQue, pathNameMap) {
-    const renderList = ({id, name}) => `<li id=${id}><a href="#">${name}</a></li>`
+    const handler = `window.APP.adaptors.get('ADT/PATHFINDER')`
+    const renderList = ({id, name}) => `<li onclick="${handler}.goto(${id})" id=${id}><a href="#">${name}</a></li>`
     const lists = pathQue.map(q => 
         ({ id: q, name: pathNameMap[q] })
     )

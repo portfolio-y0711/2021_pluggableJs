@@ -28,9 +28,9 @@ class App {
                 module.componentDidMount()
             }
 
-            // if (modulePrototypes.hasOwnProperty('render')) {
-            //     module.render()
-            // }
+            if (modulePrototypes.hasOwnProperty('render')) {
+                module.render()
+            }
         })
     }
     injectModuleLoader(loader) {
