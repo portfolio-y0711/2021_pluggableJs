@@ -15,7 +15,7 @@ class Finder {
     self
     app
     props
-    handler = `window.APP.adaptors.get('ADT/PATHFINDER')`
+    handler
     wrapper
     constructor(app) {
         this.self = this
@@ -59,7 +59,7 @@ class Finder {
                         </i>
                     </div>
                 </div>
-                ${_items.map(itemView)}
+                ${_items.map(itemView).join('')}
             `)
 
             this.wrapper.insertAdjacentHTML('beforeend', finderView)
@@ -73,8 +73,8 @@ class Finder {
         }
     }
 
-    async componentDidMount() {
-        await this.app.intoDir({id: 0, pathName: 'Root' })
+    componentDidMount() {
+        this.app.intoDir({id: 0, pathName: 'Root' })
     }
 }
 

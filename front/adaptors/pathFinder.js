@@ -6,9 +6,11 @@ const loader = (() => {
         // let pathFinder
 
         LOG(`ADT`, `${adaptorName}`, `Adaptor Loaded`)
-
         let store = app.adaptors.get('ADT/STORE')
         let api = app.adaptors.get('ADT/API')
+        ;[...app.modules].forEach(([moduleName, module]) => {
+            module.handler = `window.APP.adaptors.get('${adaptorName}')`
+        })
 
         return (() => {
             //props (& functions)

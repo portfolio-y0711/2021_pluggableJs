@@ -3,11 +3,9 @@ const loader = (() => {
 
     const load = (app) => {
         //closure: lexical scope
-        // let pathFinder
         LOG(`ADT`, `${adaptorName}`, `Adaptor Loaded`)
 
         const listeners = [...app.modules].reduce((acc, [moduleName, module]) =>
-            // (acc.push(module), acc))
             Object.assign(acc, { [`${moduleName}`]: module })
             , {})
 

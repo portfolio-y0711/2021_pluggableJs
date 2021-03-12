@@ -11,7 +11,7 @@ class App {
     constructor() {
        this.self = this 
     }
-    async start() {
+    start() {
         let instance
 
         // create proxy
@@ -26,10 +26,6 @@ class App {
 
             if (modulePrototypes.hasOwnProperty('componentDidMount')) {
                 module.componentDidMount()
-            }
-
-            if (modulePrototypes.hasOwnProperty('render')) {
-                module.render()
             }
         })
     }

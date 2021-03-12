@@ -15,7 +15,7 @@ class Bread {
     app
     props
     wrapper
-    handler = `window.APP.adaptors.get('ADT/PATHFINDER')`
+    handler
     constructor(app) {
        this.self = this
        this.app = app
