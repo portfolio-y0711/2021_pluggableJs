@@ -24,12 +24,8 @@ class Bread {
         this.wrapper.innerHTML = ''
         const { pathQue, pathNameMap } = this.props
         
-        const ol = document.createElement('ol')
-        ol.classList.add('arrows')
-        const template = (id, name) => `<li id=${id}><a href="#">${name}</a></li>`
-        const breadView = pathQue.map(q => template(q, pathNameMap[q])).join('')
-        ol.insertAdjacentHTML('beforeend', breadView)
-        this.wrapper.appendChild(ol)
+        const breadView = renderBreadcrumbs(pathQue, pathNameMap)
+        this.wrapper.insertAdjacentHTML('beforeend', breadView)
         
         const breadcrumbs = Array.from(this.wrapper.querySelectorAll('li'))
         breadcrumbs.forEach(li => {
@@ -38,6 +34,18 @@ class Bread {
             })
         })
     }
+}
+
+function renderBreadcrumbs(pathQue, pathNameMap) {
+    const renderList = ({id, name}) => `<li id=${id}><a href="#">${name}</a></li>`
+    const lists = pathQue.map(q => 
+        ({ id: q, name: pathNameMap[q] })
+    )
+    return (`
+        <ol class="arrows">
+            ${lists.map(renderList).join('')}
+        </ol>
+    `)
 }
 
 export {
