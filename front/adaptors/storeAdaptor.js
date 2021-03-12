@@ -1,21 +1,45 @@
 const loader = (() => {
     let adaptorName = 'ADT/STORE'
 
-    const load = () => {
-        let listeners = []
-        let state = {}
-        return (() => {
-            const injectModuleInstance = (module) => listeners.push(module)
-            const injectModuleInstances = (modules) => {
-              const mods = Array.from(modules).map(([moduleName, module]) => ({ moduleName, module }))
+    const load = (app) => {
+        //closure: lexical scope
+        // let pathFinder
+        LOG(`ADT`, `${adaptorName}`, `Adaptor Loaded`)
+
+        const listeners = [...app.modules].reduce((acc, [moduleName, module]) =>
+            // (acc.push(module), acc))
+            Object.assign(acc, { [`${moduleName}`]: module })
+            , {})
+
+        let state = [...app.loaders.get('modules')]
+            .reduce((acc, [loaderName, { moduleInfo: { props } }]) =>{
+                app.modules.get(loaderName).props = props
+                return Object.assign(acc, {...(acc[`${loaderName}`] = props)})
             }
-            const getState = () => (state)
-            const setState = (newState) => { state = { ...state, ...newState } }
-            const notify = () => { listeners.forEach(l => l.render()) }
+            , {})
+
+        return (() => {
+            //props (& functions)
+            const notify = () => {
+                let module
+                Object.keys(listeners).forEach(name => {
+                    module = listeners[name]
+                    module.props = state[name]
+                    module.render()
+                })
+            }
             const getStore = () => ({ getState, setState, notify })
-            return { getState, setState, injectModuleInstances, injectModuleInstance, notify, getStore }
+            const getState = () => (state)
+            const setState = (newState) => {
+                state = { ...state, ...newState }
+                notify()
+            }
+            return {
+                //exporting props (& functions)
+                getState, setState, notify, getStore }
         })()
     }
+
 
     return { adaptorName, load }
 })();

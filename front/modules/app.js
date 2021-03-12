@@ -1,60 +1,49 @@
 class App {
     appName = '2021_modular'
-    modules = new Map()
-    libraries = new Map()
     adaptors = new Map()
-    proxy
+    modules = new Map()
+    loaders = new Map([
+        [ "modules",  new Map() ],
+        [ "adaptors", new Map() ]
+    ])
     store 
     self
     constructor() {
        this.self = this 
     }
     async start() {
-        Array.from(this.adaptors.keys()).forEach((key) => {
-            const adaptor = this.adaptors.get(key)
-            if (adaptor.hasOwnProperty('injectModuleInstance')) {
-                this.modules.forEach(m => adaptor.injectModuleInstance(m))
-            }
-            if (adaptor.hasOwnProperty('injectAdaptorInstances')) {
-                adaptor.injectAdaptorInstances(this.adaptors)
-            }
-        })
-        Array.from(this.modules.keys()).forEach((key) => {
-           const module = this.modules.get(key) 
-           const modulePrototypes = Object.getPrototypeOf(module)
+        let instance
+
+        // create proxy
+        const proxy = [...this.adaptors.values()].reduce((acc, adaptor) => {
+            return Object.assign(acc, { ...adaptor })
+        }, {})
+        const isEmpty = (proxy) => (Object.keys(proxy).length === 0 && proxy.constructor === Object)
+
+        ;[...this.modules].forEach(([moduleName, module]) => {
+            module.app = isEmpty(proxy) ? this : proxy 
+            const modulePrototypes = Object.getPrototypeOf(module)
+
             if (modulePrototypes.hasOwnProperty('componentDidMount')) {
                 module.componentDidMount()
             }
-            if (modulePrototypes.hasOwnProperty('render')) {
-                module.render()
-            }
+
+            // if (modulePrototypes.hasOwnProperty('render')) {
+            //     module.render()
+            // }
         })
+    }
+    injectModuleLoader(loader) {
+        const { moduleName } = loader
+        LOG(`APP`, `${moduleName}` ,`Module Loader Injected`)
+        this.loaders.get('modules').set(moduleName, loader)
+        this.modules.set(moduleName, loader.load())
     }
     injectAdaptorLoader(loader) {
         const { adaptorName } = loader
-        console.log(`[APP] |${adaptorName}| Adaptor Loader Injected`)
-        const adaptorInstance = loader.load(this)
-        this.adaptors.set(`${adaptorName}`, adaptorInstance)
-    }
-    injectModuleLoader(loader) {
-        const adaptors = Array.from(this.adaptors.keys()).map(key => this.adaptors.get(key))
-
-        if (adaptors.length > 0) {
-            this.proxy = adaptors.reduce((acc, adaptor) => {
-                return Object.assign(acc, { ...adaptor })
-            }, {})
-        }
-
-        const { moduleName } = loader
-        console.log(`[APP] |${moduleName}| Module Loader Injected`)
-        const moduleInstance = loader.load(this.proxy || this)
-        this.modules.set(`${moduleName}`, moduleInstance)
-    }
-    injectLibraryLoader(loader) {
-        const { libName } = loader
-        console.log(`[APP] |${libName}| Loader Injected`)
-        const libInstance = loader.load(this)
-        this.libraries.set(`${libName}`, libInstance)
+        LOG(`APP`, `${adaptorName}`, `Adaptor Loader Injected`)
+        this.loaders.get('adaptors').set(adaptorName, loader)
+        this.adaptors.set(adaptorName,loader.load(this))
     }
 }
 

@@ -1,13 +1,19 @@
 const loader = (() => {
-    let libName = ''
     let moduleName = 'BREAD'
-    const load = (app) => new Bread(app)
-    return {libName, moduleName, load}
+    let moduleInfo = {
+        props: {
+            pathQue: [],
+            pathNameMap: {}
+        }
+    }
+    const load = (app) => (LOG(`MOD`, `${moduleName}`, `Module Loaded`), new Bread(app))
+    return { moduleName, moduleInfo, load }
 })()
 
 class Bread {
     self
     app
+    props
     wrapper
     constructor(app) {
        this.self = this
@@ -16,12 +22,12 @@ class Bread {
     }
     render() {
         this.wrapper.innerHTML = ''
-        const { 'bread': { pathQue, pathNameMap } } = this.app.getState()
+        const { pathQue, pathNameMap } = this.props
         
         const ol = document.createElement('ol')
         ol.classList.add('arrows')
         const template = (id, name) => `<li id=${id}><a href="#">${name}</a></li>`
-        const breadView = pathQue.map(q => template(q, pathNameMap.get(q))).join('')
+        const breadView = pathQue.map(q => template(q, pathNameMap[q])).join('')
         ol.insertAdjacentHTML('beforeend', breadView)
         this.wrapper.appendChild(ol)
         
@@ -31,7 +37,6 @@ class Bread {
                 this.app.goto(parseInt(e.currentTarget.id))
             })
         })
-        
     }
 }
 

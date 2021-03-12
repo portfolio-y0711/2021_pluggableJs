@@ -1,121 +1,97 @@
 const loader = (() => {
     let adaptorName = 'ADT/PATHFINDER'
 
-    const load = () => {
+    const load = (app) => {
         //closure: lexical scope
         // let pathFinder
-        let store
-        let api
-        let mods
+
+        LOG(`ADT`, `${adaptorName}`, `Adaptor Loaded`)
+
+        let store = app.adaptors.get('ADT/STORE')
+        let api = app.adaptors.get('ADT/API')
 
         return (() => {
             //props (& functions)
-
-            const injectAdaptorInstances = async(adaptors) => {
-                api = adaptors.get('ADT/API')
-                store = adaptors.get('ADT/STORE')
-                
-                store.setState({
-                    'finder': {
-                        parentPath: 0,
-                        currentPath: 0,
-                        items: [] 
-                    },
-                    'bread': {
-                        pathQue: [],
-                        pathNameMap: new Map()
-                    }
-                })
-            }
-
-            const injectModuleInstances = (modules) => {
-                mods = Array.from(modules).map(([moduleName, module]) => ({ moduleName, module }))
-            }
-
             const goto = async(id) => {
-                const { finder, bread } = store.getState()
-                if (bread.pathQue.length === 1 || id === finder.currentPath) {
+                const { FINDER: { currentDir, parentDir }, BREAD: { pathQue, pathNameMap } } = store.getState()
+                if (pathQue.length === 1 || id === currentDir) {
                     return
                 }
-
-                const idx = bread.pathQue.findIndex(e => e === id)
+                const idx = pathQue.findIndex(e => e === id)
                 const items = await api.get(id) 
-
-                const [ rem, dump ] = [ bread.pathQue.slice(0, idx + 1), bread.pathQue.slice(idx + 1) ]
+                const [ newPathQue, pathQueToDelete ] = [ pathQue.slice(0, idx + 1), pathQue.slice(idx + 1) ]
                 
-                dump.forEach(d => {
-                    bread.pathNameMap.delete(d)
+                pathQueToDelete.forEach(pathName => {
+                    delete pathNameMap[pathName]
                 })
-                bread.pathQue = rem
+
                 store.setState({
-                    'finder': {
-                        currentPath: id,
-                        parentPath: rem[rem.length - 2],
+                    'FINDER': {
+                        currentDir: id,
+                        parentDir: newPathQue[newPathQue.length - 2],
                         items: items
                     },
-                    'bread': {
-                        pathQue: bread.pathQue,
-                        pathNameMap: bread.pathNameMap
+                    'BREAD': {
+                        pathQue: [...newPathQue],
+                        pathNameMap: pathNameMap
                     }
                 })
-                store.notify()
+                const { FINDER: { currentDir: _currentDir, parentDir: _parentDir }, BREAD: { pathQue: _pathQue, pathNameMap: _pathNameMap } } = store.getState()
+                LOG('','', `\n# goto(${id})\n\ncurrentDir: ${_currentDir}\nparentDir: ${_parentDir}\npathQue: ${_pathQue}\npathNameMap: ${JSON.stringify(_pathNameMap)}`)
             }
 
             const outOfDir = async() => {
-                const { finder, bread } = store.getState()
-                if (finder.currentPath === 0) {
+                const { FINDER: { currentDir, parentDir }, BREAD: { pathQue, pathNameMap } } = store.getState()
+                if (currentDir === 0) {
                     return 
                 }
-                const items = await api.get(finder.parentPath) 
-
-                const keyToDelete = bread.pathQue.pop()
-                bread.pathNameMap.delete(keyToDelete)
+                const items = await api.get(parentDir)
+                const keyToDelete = pathQue.pop()
+                delete pathNameMap[keyToDelete]
 
                 store.setState({
-                    'finder': {
-                        currentPath: finder.parentPath,
-                        parentPath: 0,
-                        items: items
+                    'FINDER': {
+                        currentDir: parentDir,
+                        parentDir: pathQue[pathQue.length - 2],
+                        items: [...items]
                     },
-                    'bread': {
-                        pathQue: bread.pathQue,
-                        pathNameMap: bread.pathNameMap
+                    'BREAD': {
+                        pathQue: pathQue,
+                        pathNameMap: pathNameMap
                     }
                 })
-                store.notify()
+                const { FINDER: { currentDir: _currentDir, parentDir: _parentDir }, BREAD: { pathQue: _pathQue, pathNameMap: _pathNameMap } } = store.getState()
+                LOG('','', `\n# outOfDir()\n\ncurrentDir: ${_currentDir}\nparentDir: ${_parentDir}\npathQue: ${_pathQue}\npathNameMap: ${JSON.stringify(_pathNameMap)}`)
             }
 
             const intoDir = async({ id, pathName }) => {
-                const { finder, bread } = store.getState()
+                const { FINDER: { currentDir, parentDir }, BREAD: { pathQue, pathNameMap } } = store.getState()
                 const items = await api.get(id)
 
-                bread.pathQue.push(id)
-                bread.pathNameMap.set(id, pathName)
-
                 store.setState({
-                    'finder': {
-                        currentPath: id,
-                        parentPath: finder.currentPath,
-                        items: items
+                    'FINDER': {
+                        currentDir: id,
+                        parentDir: currentDir,
+                        items: [...items]
                     },
-                    'bread': {
-                        pathQue: bread.pathQue,
-                        pathNameMap: bread.pathNameMap
+                    'BREAD': {
+                        pathQue: [...pathQue, id],
+                        pathNameMap: { ...pathNameMap, ...{ [`${id}`]: pathName } }
                     }
                 })
-                store.notify()
+                const { FINDER: { currentDir: _currentDir, parentDir: _parentDir }, BREAD: { pathQue: _pathQue, pathNameMap: _pathNameMap } } = store.getState()
+                LOG('','', `\n# intoDir(${id}, ${pathName})\n\ncurrentDir: ${_currentDir}\nparentDir: ${_parentDir}\npathQue: ${_pathQue}\npathNameMap: ${JSON.stringify(_pathNameMap)}`)
             }
             return {
                 //exporting props (& functions)
-                injectAdaptorInstances,
                 outOfDir,
                 intoDir,
-                goto,
+                goto
             }
         })()
     }
 
-    return {adaptorName, load}
+    return { adaptorName, load }
 })();
 
 export {

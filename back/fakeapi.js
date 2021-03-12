@@ -2,7 +2,9 @@ const loader = (() => {
     let adaptorName = 'ADT/API'
     let proxy
 
-    const load = (app) => {
+    const load = () => {
+        LOG(`ADT`, `${adaptorName}`, `Adaptor Loaded`)
+
         let baseUrl = 'http://localhost:5000'
         return (() => {
             const get = async(path) => {
@@ -22,6 +24,10 @@ const loader = (() => {
     return { adaptorName, load }
 })()
 
+;(() => {
+
+})()
+
 export {
     loader
 }
@@ -33,13 +39,13 @@ const data = {
             type: 'DIRECTORY',
             title: 'monorepo',
             filepath: null,
-            parent: null
+            parent: 0
         }, {
             id: 3,
             type: 'DIRECTORY',
             title: 'assets',
             filepath: null,
-            parent: null
+            parent: 0
         }
     ],
     query1: [
@@ -48,19 +54,19 @@ const data = {
             type: 'FILE',
             title: 'README.md',
             filepath: './assets/walldog.png',
-            parent: 0
+            parent: 1
         }, {
             id: 12,
             type: 'FILE',
             title: 'package.json',
             filepath: './assets/package.json',
-            parent: 0
+            parent: 1
         }, {
             id: 13,
             type: 'DIRECTORY',
             title: 'packages',
             filepath: null,
-            parent: null
+            parent: 1
         }
 
     ],
@@ -117,14 +123,14 @@ const data = {
             type: 'FILE',
             title: 'tsconfig.json',
             filepath: './assets/1311/tsconfig.json',
-            parent: 131
+            parent: 132
         },
         {
             id: 1322,
             type: 'FILE',
             title: 'package.json',
             filepath: './assets/1311/package.png',
-            parent: 131
+            parent: 132
         }
     ],
     query133: [
@@ -133,14 +139,14 @@ const data = {
             type: 'FILE',
             title: 'tsconfig.json',
             filepath: './assets/1311/tsconfig.json',
-            parent: 131
+            parent: 133
         },
         {
             id: 1332,
             type: 'FILE',
             title: 'package.json',
             filepath: './assets/1311/package.png',
-            parent: 131
+            parent: 133
         }
     ]
 }

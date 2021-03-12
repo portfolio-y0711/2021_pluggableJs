@@ -1,2 +1,2 @@
-console.log('[MAIN] INIT')
+LOG('▸▸▸', 'MAIN', 'INIT')
 window.APP.start()

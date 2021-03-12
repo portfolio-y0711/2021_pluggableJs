@@ -41,11 +41,11 @@ main {
   padding: 20px 50px;
 }
 
-.folder *, .file * {
+.folder *, .file *, .revert * {
   width: 100px;
 }
 
-.folder, .file {
+.folder, .file, .revert {
   float: left;
   width: 100px;
   height: 152px;
@@ -57,26 +57,26 @@ main {
   cursor: pointer;
 }
 
-.folder:hover h1, .file:hover h1 {
+.folder:hover h1, .file:hover h1, .revert:hover h1 {
   display: none;
 }
 
-.folder:hover p.cooltip, .file:hover p.cooltip {
+.folder:hover p.cooltip, .file:hover p.cooltip, .revert:hover p.cooltip {
   opacity: 1;
   top: 0;
 }
 
-.folder *, .file * {
+.folder *, .file *, .revert * {
   text-align: center;
 }
 
-.folder i, .file i {
+.folder i, .file i, .revert i {
   margin: 0;
   font-size: 100px;
   color: #607D8B;
 }
 
-.folder h1, .file h1 {
+.folder h1, .file h1, .revert h1 {
   position: relative;
   display: block;
   top: -37px;
@@ -84,7 +84,7 @@ main {
   font-weight: 400;
 }
 
-.folder p.cooltip, .file p.cooltip {
+.folder p.cooltip, .file p.cooltip, .revert p.cooltip {
   position: relative;
   top: 5px;
   left: -50%;
@@ -99,7 +99,7 @@ main {
   opacity: 0;
 }
 
-.folder p.cooltip:before, .file p.cooltip:before {
+.folder p.cooltip:before, .file p.cooltip:before, .revert p.cooltip:before {
   content: '';
   position: absolute;
   display: block;
