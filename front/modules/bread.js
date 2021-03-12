@@ -15,6 +15,7 @@ class Bread {
     app
     props
     wrapper
+    handler = `window.APP.adaptors.get('ADT/PATHFINDER')`
     constructor(app) {
        this.self = this
        this.app = app
@@ -23,23 +24,19 @@ class Bread {
     render() {
         this.wrapper.innerHTML = ''
         const { pathQue, pathNameMap } = this.props
+
+        const renderList = ({id, name}) => `<li onclick="${this.handler}.goto(${id})" id=${id}><a href="#">${name}</a></li>`
+        const lists = pathQue.map(q => 
+            ({ id: q, name: pathNameMap[q] })
+        )
+        const breadView = (`
+            <ol class="arrows">
+                ${lists.map(renderList).join('')}
+            </ol>
+        `)
         
-        const breadView = renderBreadcrumbs(pathQue, pathNameMap)
         this.wrapper.insertAdjacentHTML('beforeend', breadView)
     }
-}
-
-function renderBreadcrumbs(pathQue, pathNameMap) {
-    const handler = `window.APP.adaptors.get('ADT/PATHFINDER')`
-    const renderList = ({id, name}) => `<li onclick="${handler}.goto(${id})" id=${id}><a href="#">${name}</a></li>`
-    const lists = pathQue.map(q => 
-        ({ id: q, name: pathNameMap[q] })
-    )
-    return (`
-        <ol class="arrows">
-            ${lists.map(renderList).join('')}
-        </ol>
-    `)
 }
 
 export {
