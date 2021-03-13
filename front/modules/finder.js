@@ -16,6 +16,7 @@ class Finder {
     app
     props
     handler
+    modal
     wrapper
     constructor(app) {
         this.self = this
@@ -26,9 +27,7 @@ class Finder {
     }
     async openFile({ id }) {
         const blob = await this.app.open(id)
-        this.modal.style.display = "block"
-        this.modalImg.src = URL.createObjectURL(blob) 
-        this.modalImg.style.border = 0
+        this.modal.showModal(blob)
     }
     render() {
         this.wrapper.innerHTML = ''
@@ -54,7 +53,7 @@ class Finder {
             })
 
             const itemView = (item => {
-                return (`<div id="${item.id}" onclick="('${item.type}' === 'FILE') ? window.APP.modules.get('FINDER').openFile({ id: ${item.id} }) : ${this.handler}.${item.method}({ id: ${item.id}, pathName: '${item.title}' })" class="${item.className}">
+                return (`<div id="${item.id}" onclick=";('${item.type}' === 'FILE') ? window.APP.modules.get('FINDER').openFile({ id: ${item.id} }) : ${this.handler}.${item.method}({ id: ${item.id}, pathName: '${item.title}' })" class="${item.className}">
                     <i class="material-icons">${item.icon}
                         <p class="cooltip">0 folders / 0 files</p>
                     </i>
@@ -75,12 +74,6 @@ class Finder {
 
             this.wrapper.insertAdjacentHTML('beforeend', finderView)
             const [folder, file] = [[...this.wrapper.querySelectorAll('div.folder')], [...this.wrapper.querySelectorAll('div.file')]]
-
-            if (file.length > 0) {
-                file.map(f => f.addEventListener('click', (e) => {
-                    console.log(e.currentTarget.id)
-                }))
-            }
         }
     }
 

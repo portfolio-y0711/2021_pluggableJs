@@ -19,9 +19,9 @@ class App {
             return Object.assign(acc, { ...adaptor })
         }, {})
         const isEmpty = (proxy) => (Object.keys(proxy).length === 0 && proxy.constructor === Object)
-        console.log(proxy)
         ;[...this.modules].forEach(([moduleName, module]) => {
             module.app = isEmpty(proxy) ? this : proxy 
+            module.hasOwnProperty('modal') ? module.modal = this.modules.get('MODAL') : null
             const modulePrototypes = Object.getPrototypeOf(module)
 
             if (modulePrototypes.hasOwnProperty('componentDidMount')) {
