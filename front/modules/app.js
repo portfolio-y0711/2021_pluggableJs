@@ -19,7 +19,7 @@ class App {
             return Object.assign(acc, { ...adaptor })
         }, {})
         const isEmpty = (proxy) => (Object.keys(proxy).length === 0 && proxy.constructor === Object)
-
+        console.log(proxy)
         ;[...this.modules].forEach(([moduleName, module]) => {
             module.app = isEmpty(proxy) ? this : proxy 
             const modulePrototypes = Object.getPrototypeOf(module)

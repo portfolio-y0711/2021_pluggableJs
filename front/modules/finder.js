@@ -21,8 +21,16 @@ class Finder {
         this.self = this
         this.app = app
         this.wrapper = document.querySelector('finder')
+        this.modal = document.getElementById('myModal')
+        this.modalImg = document.getElementById("img01")
     }
-    async render() {
+    async openFile({ id }) {
+        const blob = await this.app.open(id)
+        this.modal.style.display = "block"
+        this.modalImg.src = URL.createObjectURL(blob) 
+        this.modalImg.style.border = 0
+    }
+    render() {
         this.wrapper.innerHTML = ''
         const { items, parentDir } = this.props
 
@@ -34,16 +42,19 @@ class Finder {
                 if (type === 'DIRECTORY') {
                     props['className'] = 'folder'
                     props['icon'] = 'folder'
+                    props['method'] = 'intoDir'
                 } else if (type === 'FILE') {
                     props['className'] = 'file'
                     props['icon'] = 'file_present'
+                    props['method'] = 'open'
                 } else {
                     throw Error('ITEM TYPE ERROR')
                 }
-                return { ...props, id: id, title: title }
+                return { ...props, id, title, type }
             })
+
             const itemView = (item => {
-                return (`<div id="${item.id}" onclick="${this.handler}.intoDir({ id: ${item.id}, pathName: '${item.title}' })" class="${item.className}">
+                return (`<div id="${item.id}" onclick="('${item.type}' === 'FILE') ? window.APP.modules.get('FINDER').openFile({ id: ${item.id} }) : ${this.handler}.${item.method}({ id: ${item.id}, pathName: '${item.title}' })" class="${item.className}">
                     <i class="material-icons">${item.icon}
                         <p class="cooltip">0 folders / 0 files</p>
                     </i>
